@@ -13,9 +13,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/', [QRController::class, 'Simple'])->name('qr_simple');
+Route::post('/simple/qrcode', [QrController::class, 'QrCode'])->name('qrcode');
 
-Route::get('/', [QRController::class, 'index'])->name('qr_builder');
-
+Route::get('/advanced', [QRController::class, 'QrBuilder'])->name('qr_builder');
 Route::post('/builder', [QrController::class, 'Builder'])->name('builder');
 
 Route::get('/phone', [QrController::class, 'phone'])->name('qr_phone');
@@ -25,7 +26,7 @@ Route::get('/sms', [QrController::class, 'sms'])->name('qr_sms');
 
 
 
-
+Route::get('/index', [QRController::class, 'index'])->name('index');
 
 
 Auth::routes();

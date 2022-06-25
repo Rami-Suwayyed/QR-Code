@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Simple;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -14,8 +15,15 @@ class QRController extends Controller
 
     public function index()
     {
+        $data['QrCodes']=Simple::all();
+        return view('qr_code.index',$data);
+    }
+
+    public function QrBuilder()
+    {
         return view('qr_code.qr_builder');
     }
+
 
     public function Builder(Request $request)
     {
@@ -102,11 +110,20 @@ class QRController extends Controller
         $qr->backgroundColor($qr_background_color->red(), $qr_background_color->green(), $qr_background_color->blue(), $qr_background_transparent);
 
         if ($qr_attachment == 'yes') {
-            $qr->merge('../public/mindscms.png', .2, true);
+            $qr->merge('../public/R-icon.png', .2, true);
         }
 
 
         $qr->generate($body, '../public/qr_code/' . $code);
+
+        $Qr_code = new Simple();
+        $Qr_code->name =  $name;
+        $Qr_code->type = "Advanced";
+        $Qr_code->type_id = 1;
+        $Qr_code->qr_name =$code ;
+        $Qr_code->path = 'qr_code/';
+        $Qr_code->save();
+
 
         return back()->with([
             'status' => 'QR Code generated successfully!',
@@ -133,6 +150,50 @@ class QRController extends Controller
     public function sms()
     {
         return view('qr_code.qr_sms');
+    }
+
+
+
+    public function Simple()
+    {
+        return view('qr_code.simple_qr');
+    }
+
+
+    public function QrCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'body' => 'required'
+        ]);
+        if ($validator->fails()){
+            return back()->withErrors($validator)->withInput();
+        }
+        $name = $request->input('name');
+        $code = Str::slug($name) . '.' . 'png';
+        $body = $request->input('body');
+        $qr_attachment = $request->input('qr_attachment') ?? 'no';
+
+        $qr = QrCode::format('png');
+        $qr->size(600);
+        if ($qr_attachment == 'yes') {
+            $qr->merge('../public/R-icon.png', .2, true);
+        }
+        $qr->generate($body, '../public/qr_code/' . $code);
+
+        $Qr_code = new Simple();
+        $Qr_code->name =  $name;
+        $Qr_code->type = "Simple";
+        $Qr_code->type_id = 1;
+        $Qr_code->qr_name =$code ;
+        $Qr_code->path = 'qr_code/';
+        $Qr_code->save();
+
+        return back()->with([
+            'status' => 'QR Code generated successfully!',
+            'code' => $code
+        ]);
+
     }
 
 }

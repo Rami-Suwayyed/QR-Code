@@ -7,7 +7,9 @@
                     <div class="card-header d-flex">
                         {{ __('QR Builder') }}
                         <div class="ml-auto">
-                            <a href="{{ route('qr_builder') }}">QR Builder</a> -
+{{--                            <a href="{{ route('index') }}">QR Index</a> ---}}
+                            <a href="{{ route('qr_builder') }}">QR Advanced</a> -
+                            <a href="{{ route('qr_simple') }}">QR Simple</a> -
                             <a href="{{ route('qr_phone') }}">Phone</a> -
                             <a href="{{ route('qr_email') }}">Email</a> -
                             <a href="{{ route('qr_geo') }}">Maps</a> -
